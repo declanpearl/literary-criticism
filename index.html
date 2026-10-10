@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lit Crit Drill</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#151235;--ink:#f3f0ff;--mut:#a99ee0;--pill:#2e2a6b;--edge:#0c0a26;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;line-height:1.4}
+main{max-width:1000px;margin:0 auto;padding:24px 18px 48px}
+h1{font-size:clamp(2.6rem,9vw,5.2rem);font-weight:800;letter-spacing:-.04em;line-height:.95;margin:0 0 14px}
+.sub{color:var(--mut);font-size:1.15rem;font-weight:500;max-width:34ch;margin:0 0 26px}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.cfg{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px;font-weight:700}
+.seg{display:inline-flex;background:var(--pill);border:2px solid var(--edge);border-radius:999px;padding:5px;gap:4px}
+.seg button{font:inherit;font-weight:800;border:0;background:none;color:var(--ink);border-radius:999px;padding:8px 20px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.box{font:inherit;text-align:left;border:3px solid var(--edge);border-radius:26px;padding:24px 24px 20px;min-height:200px;display:flex;flex-direction:column;justify-content:space-between;color:#171346;cursor:pointer;box-shadow:0 7px 0 var(--edge);transition:transform .08s,box-shadow .08s}
+.box:hover{transform:translateY(-3px);box-shadow:0 10px 0 var(--edge)}
+.box:active{transform:translateY(4px);box-shadow:0 3px 0 var(--edge)}
+.box h2{font-size:1.9rem;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:0 0 10px}
+.box p{margin:0;font-size:1rem;font-weight:500}
+.box .best{font-size:.85rem;margin-top:18px;font-weight:600}
+.note{color:var(--mut);margin-top:30px;max-width:62ch;font-size:1.02rem;font-weight:500}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-weight:700}
+.back{font:inherit;font-weight:700;background:none;border:0;color:var(--mut);cursor:pointer;padding:0}
+.bar{height:12px;background:var(--pill);border:2px solid var(--edge);border-radius:99px;overflow:hidden;margin-bottom:24px}
+.bar i{display:block;height:100%;background:var(--c);transition:width .25s}
+.qt{font-size:clamp(1.5rem,4.6vw,2.3rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:0 0 22px}
+.opt{display:flex;gap:14px;align-items:center;width:100%;text-align:left;font:inherit;font-weight:600;font-size:1.1rem;color:var(--ink);background:var(--pill);border:3px solid var(--edge);border-radius:18px;padding:14px 16px;margin:0 0 12px;cursor:pointer;box-shadow:0 4px 0 var(--edge)}
+.opt b{flex:none;width:34px;height:34px;border-radius:10px;background:var(--bg);display:grid;place-items:center;font-family:"JetBrains Mono",monospace}
+.opt.sel{background:var(--c);color:#171346}
+.opt.sel b{background:#171346;color:var(--c)}
+.opt.right{background:#2ad4a6;color:#171346}
+.opt.wrong{background:#ff4d73;color:#171346}
+.opt:disabled{cursor:default}
+.go{font:inherit;font-weight:800;font-size:1.2rem;border:3px solid var(--edge);border-radius:16px;background:var(--ink);color:var(--bg);padding:13px 34px;cursor:pointer;box-shadow:0 5px 0 var(--edge);margin-top:8px}
+.go:disabled{opacity:.35;cursor:not-allowed}
+.fb{min-height:1.6em;margin-top:16px;font-weight:700}
+.score{font-size:clamp(3.5rem,14vw,7rem);font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--c)}
+.rev{background:var(--pill);border:2px solid var(--edge);border-radius:16px;padding:14px 16px;margin:12px 0}
+.rev .y{color:#ff8fa5}.rev .c{color:#5ee6bd}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.go.alt{background:var(--pill);color:var(--ink)}
+.ld{animation:pl 1.1s ease-in-out infinite}@keyframes pl{50%{opacity:.35}}</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const S=[
+{id:"guest",t:"The Ambitious Guest",q:[
+["Where is the family's cottage located?","In a mountain notch in the White Mountains","On the Maine coast","In a Berkshire farming village","Beside the Merrimack River"],
+["What is the young stranger's central ambition?","To be remembered by posterity after death","To amass a great fortune","To win high political office","To find a hidden silver mine"],
+["How does the family die?","A slide of earth and rock from the mountain overtakes them as they flee","A fire consumes the cottage","A river floods the valley","A fever spreads through the house"],
+["What is the central irony of the ending?","The house stands unharmed while the family dies fleeing it","The guest is famous after death","The family is saved by the stranger","The storm never arrives"],
+["What happens to the guest's identity?","His name is never known, so the fame he craved is denied","He is celebrated as a hero","His name is carved on a monument","He is identified by his journal"],
+["The family's wishes, compared with the guest's, are mostly:","Modest and domestic","Grand and political","Scholarly and religious","Wealthy and worldly"],
+["Which theme is most central?","Ambition for fame versus the fragility of life and the anonymity of death","The corrupting power of wealth","The evils of science","The value of formal education"],
+["The narrator's point of view is best described as:","Third-person omniscient","First-person participant","Second-person","Third-person limited to the guest only"],
+["Which real event inspired the tale?","The 1826 Willey family avalanche in New Hampshire","The Salem witch trials","The Great Chicago Fire","The sinking of a New England steamer"],
+["The family's warm, cheerful fireside mood just before the slide mainly serves to:","Heighten the tragic irony of the disaster","Show the family's wealth","Criticize their laziness","Introduce a romantic plot"]]},
+{id:"artist",t:"The Artist of the Beautiful",q:[
+["What is Owen Warland's profession?","Watchmaker","Blacksmith","Painter","Clergyman"],
+["What does Owen finally create?","A mechanical butterfly that seems alive","A perpetual motion clock","A marble statue","A music box"],
+["Who marries Annie Hovenden?","Robert Danforth, the blacksmith","Owen Warland","Peter Hovenden's apprentice","A traveling merchant"],
+["Who is Peter Hovenden?","Annie's father and Owen's former master, who scorns Owen's delicacy","Owen's brother","The town's minister","A rival artist"],
+["How is the butterfly destroyed?","Annie's infant child crushes it in his hand","Danforth smashes it with a hammer","It is lost in a fire","Owen breaks it himself"],
+["How does Owen react to its destruction?","Calmly, because he has already attained the ideal in spirit","With rage and despair","By rebuilding it at once","By leaving town forever"],
+["Robert Danforth most clearly symbolizes:","Physical strength and practical materialism","Artistic genius","Religious faith","Aristocratic privilege"],
+["The butterfly symbolizes:","The spiritual ideal, beauty, and the soul","Wealth","Death","Industrial progress"],
+["Which theme is central?","The artist's pursuit of the ideal against a materialistic, uncomprehending society","The benefits of manual labor","The danger of ambition in politics","The corruption of the clergy"],
+["Hovenden's attitude toward Owen's work is best described as:","Dismissive and practical","Admiring and supportive","Envious","Fearful"]]},
+{id:"birthmark",t:"The Birthmark",q:[
+["What is Aylmer's occupation?","Scientist (natural philosopher)","Physician in a hospital","Clergyman","Poet"],
+["What is the shape of Georgiana's birthmark?","A tiny hand on her cheek","A star on her forehead","A crescent on her neck","A rose on her wrist"],
+["Who is Aminadab?","Aylmer's earthy, crude laboratory assistant","Georgiana's brother","A rival scientist","The family doctor"],
+["What does Aylmer's dream reveal?","The birthmark is rooted too deeply, reaching her heart","The birthmark can be cut away easily","Georgiana will flee him","His experiment will bring fame"],
+["How does the story end?","The birthmark fades as Georgiana dies","Georgiana is cured and lives happily","Aylmer destroys his laboratory","Georgiana leaves him"],
+["What does the birthmark symbolize?","Human mortality and earthly imperfection","Georgiana's vanity","Aylmer's wealth","Scientific progress"],
+["Which theme is central?","The folly of seeking perfection and tampering with nature","The joy of scientific discovery","The value of beauty","The power of money"],
+["Aylmer's chief flaw is:","Hubris, the desire to master and perfect nature","Greed","Cowardice","Laziness"],
+["Aminadab's attitude toward the birthmark contrasts with Aylmer's because he:","Would never remove it, valuing the earthly","Despises it more","Wants to study it","Is indifferent to Georgiana"],
+["Aylmer's ultimate failure is that he:","Cannot accept the imperfect, mortal conditions of earthly happiness","Lacks scientific skill","Mixes the wrong chemicals","Loses his notebooks"]]},
+{id:"railroad",t:"The Celestial Railroad",q:[
+["Which work does Hawthorne's story parody?","Bunyan's The Pilgrim's Progress","Dante's Inferno","Milton's Paradise Lost","Swift's Gulliver's Travels"],
+["Where does the train travel from and to?","City of Destruction to the Celestial City","Boston to New York","Heaven to Hell","Vanity Fair to Salem"],
+["Who is Mr. Smooth-it-away?","The narrator's smooth, deceptive guide who is tied to the devil","A genuine pilgrim","A clergyman","The conductor"],
+["How has the Slough of Despond been made passable?","It is filled with fashionable books and philosophies","A stone bridge is built","It is drained","Pilgrims carry the boat"],
+["What does the story primarily satirize?","Easy, comfortable modern religion and shallow reform","Medieval superstition","Government taxation","Rural poverty"],
+["Who is revealed as the engineer of the train?","Apollyon","Mr. Great-heart","Christian","Faithful"],
+["How does the story end?","The narrator awakens and the journey was a dream","The narrator reaches paradise","The train crashes in battle","The narrator joins the clergy"],
+["The Giant Transcendentalist is portrayed as:","A vague, shapeless figure, satirizing Transcendentalist vagueness","A fierce warrior","A kindly teacher","A wealthy railroad owner"],
+["The form of the story is best called:","Allegorical satire","Gothic romance","Historical tale","Realistic novel"],
+["What does the railroad itself symbolize?","The easy, modern path that avoids spiritual struggle","Industrial wealth only","The frontier","Religious martyrdom"]]},
+{id:"heidegger",t:"Dr. Heidegger's Experiment",q:[
+["Which of these is one of Heidegger's guests?","The Widow Wycherly","Mrs. Hovenden","Miss Georgiana","Mrs. Ward"],
+["What is the source of the water?","The Fountain of Youth in Florida","A spring in Massachusetts","A European monastery","A laboratory distillation"],
+["What does the rose show at the start?","It blooms again when touched by the water","It turns to dust","It changes color","It stays withered"],
+["What happens when the guests grow young?","They behave foolishly and quarrel over the widow","They repent their past","They start new careers","They leave in peace"],
+["What does Heidegger do about the water himself?","He declines to drink, having learned from the experience","Drinks first","Drinks secretly","Sells it"],
+["Whose rose is Heidegger's rose?","Sylvia Ward, his long-dead fiancée","His mother's","The Widow Wycherly's","Colonel Killigrew's"],
+["What do the guests plan at the end?","To travel to Florida to drink from the fountain","To destroy the vase","To forgive each other","To retire quietly"],
+["Which theme is most central?","People repeat their follies even when given a second chance","Youth is the best time of life","Science can end death","Age brings unhappiness"],
+["The narrator's treatment of the events is:","Ambiguous, suggesting they may be illusion or trick","Strictly realistic","Wholly supernatural","Comic satire of science only"],
+["What do the four guests have in common at the outset?","Each has a past marked by failure and regret","They are all siblings","They are former students","They are all wealthy"]]},
+{id:"holocaust",t:"Earth's Holocaust",q:[
+["What is the purpose of the great bonfire?","To rid the world of its obsolete trappings","To celebrate a national holiday","To destroy a plague","To light a path for travelers"],
+["Where does the bonfire take place?","On a Western prairie","In a Boston square","On a European battlefield","In a New England harbor"],
+["Which items do the reformers burn?","Liquor, tobacco, and instruments of execution","Only works of fiction","Farming tools","Medicines"],
+["Who is the dark-visaged stranger?","A figure representing the devil, who mocks the reformers","A prophet","A government official","A reformer's leader"],
+["What does the stranger say remains?","The human heart, the source of all evil","The law","The church","The gold"],
+["Which theme is central?","External reform is useless without changing the human heart","Technology cures social ills","Tradition should always be preserved","Wealth equals virtue"],
+["The narrator's tone toward the reformers is best described as:","Wry and skeptical","Fully enthusiastic","Bitter and hateful","Indifferent"],
+["The point of view is:","First-person observer","Third-person omniscient","Second-person","Epistolary"],
+["The story's form is best called:","Allegory with social satire","Local-color realism","Historical chronicle","Detective story"],
+["What does the bonfire's ultimate failure imply?","Evil will simply reappear because human nature is unchanged","Society is perfected","Fire is purifying","The reformers will succeed later"]]}
+];
+
+
+const COL=["#2ad4a6","#ffb02e","#ff4d73","#5aa9ff","#b48cff","#ff7a45"];
+const DESC={guest:"A family, a stranger, and a mountain. Ambition, irony, and the Willey slide.",artist:"Owen, the butterfly, and the ideal. Art versus materialism, symbols, and Danforth.",birthmark:"Aylmer, Georgiana, and Aminadab. Perfection, hubris, and mortality.",railroad:"Bunyan gone modern. Allegory, satire, Smooth-it-away, and Apollyon.",heidegger:"Four old friends, a rose, and the fountain. Folly, youth, and ambiguity.",holocaust:"The prairie bonfire. Reform, the stranger, and the human heart."};
+const ANG=["plot events and what happens","characters and their motives","symbols and imagery","theme and moral meaning","irony and tone","narrator, point of view, and structure","allegory, genre, and literary devices","setting, context, and Hawthorne's Romantic and Puritan concerns"];
+const A=document.getElementById("app");
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let st={},N=10,timer=null,SAMPLE;
+const best=id=>{try{return JSON.parse(localStorage.getItem("uilbest_"+id))}catch(e){return null}};
+const save=(id,sc,n)=>{try{const b=best(id);if(!b||sc/n>=b.sc/b.n)localStorage.setItem("uilbest_"+id,JSON.stringify({sc,n}))}catch(e){}};
+const seenGet=id=>{try{return JSON.parse(localStorage.getItem("uilseen_"+id))||[]}catch(e){return[]}};
+const seenAdd=(id,qs)=>{try{localStorage.setItem("uilseen_"+id,JSON.stringify(seenGet(id).concat(qs.map(q=>q.q.slice(0,110))).slice(-80)))}catch(e){}};
+async function getSample(){if(SAMPLE!==undefined)return SAMPLE;try{SAMPLE=window.claude?await window.claude.use("sample"):null}catch(e){SAMPLE=null}return SAMPLE}
+async function gen(rid,k){
+ const sm=await getSample();if(!sm)throw 0;
+ const t=S.find(s=>s.id===rid).t;
+ const seen=seenGet(rid).slice(-30).map(x=>"- "+x).join("\n");
+ const p=`You write multiple-choice questions for the UIL Literary Criticism contest on Nathaniel Hawthorne's "${t}".
+Write exactly ${k} NEW questions. Emphasize: ${sh(ANG).slice(0,2).join("; ")}, but vary the types (plot detail, character, symbol, theme, irony, tone, point of view, allegory, structure, context). Questions must be accurate and answerable from a careful reading of the story; use only facts you are certain are in the text. Each has 4 plausible, distinct options and exactly one correct answer. Stems under 200 characters, options under 90. Variety seed: ${Math.random().toString(36).slice(2,8)}.
+${seen?"Do NOT repeat or closely paraphrase these earlier questions:\n"+seen:""}
+Return ONLY a JSON array like [{"q":"...","o":["a","b","c","d"],"a":0}] where a is the index (0-3) of the correct option.`;
+ const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
+ let r;try{r=await sm.json(p,{cache:false,modelTier:"quick",signal:ac.signal})}finally{clearTimeout(to)}
+ const arr=Array.isArray(r)?r:(r&&r.questions)||[];
+ const out=arr.filter(x=>x&&typeof x.q==="string"&&Array.isArray(x.o)&&x.o.length===4&&new Set(x.o).size===4&&Number.isInteger(x.a)&&x.a>=0&&x.a<4).map(x=>({q:x.q,c:x.o[x.a],o:sh(x.o),rid,t})).slice(0,k);
+ if(!out.length)throw 0;
+ return out;
+}
+function fallback(my,rid,k){
+ const s=S.find(x=>x.id===rid);
+ let b=sh(s.q).filter(q=>!my.used.has(q[0]));
+ if(b.length<k)b=b.concat(sh(s.q));
+ return b.slice(0,k).map(([q,c,...w])=>{my.used.add(q);return{q,c,o:sh([c,...w.slice(0,3)]),rid,t:s.t}});
+}
+function plan(id,n){
+ const jobs=[];
+ const chunk=(rid,m,first)=>{let rem=m;if(first){const f=Math.min(3,rem);jobs.push({rid,k:f});rem-=f}while(rem>0){const c=Math.min(10,rem);jobs.push({rid,k:c});rem-=c}};
+ if(id!=="all"){chunk(id,n,true);return jobs}
+ const o=sh(S),cnt={};
+ for(let i=0;i<n;i++){const r=o[i%6].id;cnt[r]=(cnt[r]||0)+1}
+ Object.keys(cnt).forEach(r=>chunk(r,cnt[r],false));
+ return jobs;
+}
+function home(){
+ clearTimeout(timer);st={};
+ const cards=S.map((s,i)=>[s.id,s.t,DESC[s.id],COL[i]]).concat([["all","Mix It Up","Questions from all six readings, shuffled together. The closest thing to contest day.","#e8e4ff"]]);
+ A.innerHTML=`<h1>Lit Crit Drill</h1><p class="sub">UIL-style literary criticism. Read it, pick the answer, hit Enter. The next one is already waiting.</p>
+ <div class="cfg"><span>Questions per round</span><div class="seg" id="seg">`+[10,20,40].map(n=>`<button data-n="${n}" class="${n===N?"on":""}">${n}</button>`).join("")+`</div></div>
+ <div class="grid">`+cards.map(c=>{const b=best(c[0]);return `<button class="box" data-id="${c[0]}" style="background:${c[3]}"><div><h2>${c[1]}</h2><p>${c[2]}</p></div><div class="best mono">${b?`Best: ${b.sc}/${b.n}`:"No score yet"}</div></button>`}).join("")+`</div>
+ <p class="note">Every round is freshly written, so you get a brand-new set each time. Wrong answers show the correct one for a moment (press Enter to skip ahead). Don't peek at the text if you want real practice.</p>`;
+ document.getElementById("seg").onclick=e=>{const b=e.target.closest("[data-n]");if(!b)return;N=+b.dataset.n;A.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b))};
+ A.querySelectorAll(".box").forEach(b=>b.onclick=()=>begin(b.dataset.id));
+}
+function loading(){
+ A.style.setProperty("--c",st.col);
+ A.innerHTML=`<div class="top"><button class="back" id="bk">← Quit</button><span>${st.title}</span><span></span></div><div class="bar"><i style="width:0"></i></div><p class="qt ld" id="ld">Writing fresh questions…</p>`;
+ document.getElementById("bk").onclick=home;
+ setTimeout(()=>{const e=document.getElementById("ld");if(e&&!document.getElementById("bi")){e.insertAdjacentHTML("afterend",'<button class="go alt" id="bi">Taking long? Use built-in questions</button>');document.getElementById("bi").onclick=builtIn}},8000);
+}
+function begin(id){
+ let col,title;
+ if(id==="all"){title="Mix It Up";col="#b48cff"}
+ else{const i=S.findIndex(s=>s.id===id);title=S[i].t;col=COL[i]}
+ const jobs=plan(id,N);
+ const my=st={id,title,col,n:N,qs:[],i:0,sc:0,miss:[],sel:null,locked:false,last:"",pending:jobs.length,waiting:false,used:new Set(),fb:false};
+ loading();
+ const run=j=>{
+  return gen(j.rid,j.k).then(qs=>{seenAdd(j.rid,qs);return qs.length<j.k?qs.concat(fallback(my,j.rid,j.k-qs.length)):qs},()=>{my.fb=true;return fallback(my,j.rid,j.k)})
+  .then(qs=>{if(st!==my||my.done)return;my.qs.push(...qs);my.pending--;if(!my.pending)my.n=my.qs.length;if(my.waiting){my.waiting=false;show()}});
+ };
+ run(jobs[0]).then(()=>jobs.slice(1).forEach(run));
+}
+function builtIn(){
+ const my=st;if(!my.qs&&!my.id)return;
+ my.done=true;my.fb=true;my.pending=0;
+ const need=my.n-my.qs.length,o=my.id==="all"?sh(S).map(s=>s.id):[my.id];
+ for(let i=0;i<need;i++)my.qs.push(...fallback(my,o[i%o.length],1));
+ if(my.i>=my.qs.length)end();else show();
+}
+function show(){
+ const {qs,i,n,col}=st,cur=qs[i];st.sel=null;st.locked=false;
+ A.style.setProperty("--c",col);
+ A.innerHTML=`<div class="top"><button class="back" id="bk">← Quit</button><span>${st.id==="all"?cur.t:st.title}</span><span class="mono">${i+1}/${n} · ${st.sc} correct</span></div>
+ <div class="bar"><i style="width:${i/n*100}%"></i></div>
+ <p class="qt">${cur.q}</p><div id="os">`+cur.o.map((o,k)=>`<button class="opt" data-k="${k}"><b>${"ABCD"[k]}</b><span>${o}</span></button>`).join("")+
+ `</div><button class="go" id="sub" disabled>${i+1===n?"Finish":"Submit"}</button><div class="fb mono" id="fb">${st.last}</div>`;
+ document.getElementById("os").onclick=e=>{const b=e.target.closest(".opt");if(b&&!st.locked)pick(+b.dataset.k)};
+ document.getElementById("sub").onclick=submit;
+ document.getElementById("bk").onclick=home;
+}
+function pick(k){
+ st.sel=k;
+ document.querySelectorAll(".opt").forEach((b,j)=>b.classList.toggle("sel",j===k));
+ document.getElementById("sub").disabled=false;
+}
+function submit(){
+ if(st.locked){advance();return}
+ if(st.sel===null)return;
+ const cur=st.qs[st.i],ans=cur.o[st.sel];
+ if(ans===cur.c){st.sc++;st.last='<span style="color:#5ee6bd">✓ Correct</span>';advance();return}
+ st.miss.push({q:cur.q,you:ans,c:cur.c});
+ st.last='<span style="color:#ff8fa5">✗ Missed</span>';
+ st.locked=true;
+ document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;b.classList.remove("sel");if(cur.o[j]===cur.c)b.classList.add("right");else if(j===st.sel)b.classList.add("wrong")});
+ document.getElementById("fb").innerHTML=st.last+" · Enter to continue";
+ document.getElementById("sub").textContent="Next";
+ timer=setTimeout(advance,2200);
+}
+function advance(){
+ clearTimeout(timer);
+ st.i++;
+ if(st.i<st.qs.length&&st.i<st.n)show();
+ else if(st.pending>0){st.waiting=true;loading()}
+ else end();
+}
+function end(){
+ st.n=Math.min(st.n,st.qs.length);
+ save(st.id,st.sc,st.n);
+ const p=Math.round(st.sc/st.n*100);
+ A.innerHTML=`<h1>${st.title}</h1><div class="score mono">${st.sc}/${st.n}</div><p class="sub">${p}% correct${p===100?". Flawless.":p>=80?". Contest ready.":p>=60?". Getting there.":". Run it back."}${st.fb?" (Some questions came from the built-in set because the live question writer was unavailable.)":""}</p>
+ <div class="row"><button class="go" id="again">New round</button><button class="go alt" id="hm">All readings</button></div>`+
+ (st.miss.length?`<h3>Missed questions</h3>`+st.miss.map(m=>`<div class="rev"><b>${m.q}</b><br><span class="y">You: ${m.you}</span><br><span class="c">Answer: ${m.c}</span></div>`).join(""):"");
+ document.getElementById("again").onclick=()=>begin(st.id);
+ document.getElementById("hm").onclick=home;
+ st.qs=null;
+}
+document.addEventListener("keydown",e=>{
+ if(!st.qs||!document.getElementById("sub"))return;
+ if(e.key==="Enter"){submit();return}
+ if(st.locked)return;
+ const k="abcd".indexOf(e.key.toLowerCase()),d=["1","2","3","4"].indexOf(e.key),x=k>=0?k:d;
+ if(x>=0)pick(x);
+});
+home();
+</script>
+</body>
+</html>
